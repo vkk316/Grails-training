@@ -63,6 +63,15 @@ class BookController {
         result.valid = true
 
         render(result as JSON)
-        
+    }
+
+    @Transactional //Asyncroniuos
+    def delete(){
+        def result = [valid: false]
+        def book = Book.get(params.id as long)
+        book.delete()
+
+        result.valid = true
+        render(result as JSON)
     }
 }
