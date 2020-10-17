@@ -7,8 +7,8 @@ class Book {
     //ซิึ่งการชือ property ต้องงงง ขึ้นต้นด้วยตัวพิมพ์ใหญ่เท่านั้น
 
     //อ้างอิงจาก doc ของ Groovy lang
-    String title_TH
-    String title_Eng
+    String titleTH
+    String titleENG
     String author
     double price
     LocalDate since
