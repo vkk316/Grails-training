@@ -22,4 +22,15 @@ class BookController {
 
         render(result as JSON) // เอาท์พุต result เป็น json ที่ฝั่ง clien
     }
+
+    def show(){
+        def result = [valid: false]
+        def id = params.id as long //casting params.id เป็น long :: docs -> http://docs.grails.org/3.3.11/ref/Controllers/params.html
+        def book = Book.get(id) // get book ตาม id ที่ clien ขอ
+
+        result.data = book
+        result.valid = true 
+
+        render(result as JSON)
+    }
 }
