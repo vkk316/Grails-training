@@ -65,10 +65,16 @@ class BookController {
     @Transactional //Asyncroniuos
     def delete(Long id){
         def result = [valid: false]
-        def book = Book.get(id)
-        book.delete()
-
-        result.valid = true
+        try{
+            def book = Book.get(id)
+            if(!book){
+                throw new Exception("not found book id: {id}")
+            }
+            book.delete()
+            result.valid = true
+        }catch(error){
+            result.reason = error.message
+        }
         render(result as JSON)
     }
 }
