@@ -25,9 +25,8 @@ class BookController {
         render(result as JSON) // เอาท์พุต result เป็น json ที่ฝั่ง clien
     }
 
-    def show(){
+    def show(Long id){
         def result = [valid: false]
-        def id = params.id as long //casting params.id เป็น long :: docs -> http://docs.grails.org/3.3.11/ref/Controllers/params.html
         def book = Book.get(id) // get book ตาม id ที่ clien ขอ
 
         result.data = book
@@ -36,19 +35,16 @@ class BookController {
         render(result as JSON)
     }
 
-    def save(){
+    def save(Book book){
         def result = [valid: false]
-        def book = new Book(request.JSON)
         book.save(failOnError: true)
-
         result.data = book
         result.valid = true
-
         render(result as JSON) 
     }
 
     @Transactional
-    def update(){
+    def update(Book book){
         /* 
         1. get book following id
         2. new data from clien to replace rpevious data
@@ -56,7 +52,6 @@ class BookController {
         */
 
         def result = [valid: false]
-        def book = Book.get(params.id as long)
         bindData(book, request.JSON)
 
         book.save(failOnError: true)
@@ -68,9 +63,9 @@ class BookController {
     }
 
     @Transactional //Asyncroniuos
-    def delete(){
+    def delete(Long id){
         def result = [valid: false]
-        def book = Book.get(params.id as long)
+        def book = Book.get(id)
         book.delete()
 
         result.valid = true
