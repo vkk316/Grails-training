@@ -4,6 +4,8 @@ import grails.gorm.transactions.Transactional
 import grails.rest.*
 import grails.converters.*
 
+// Before Refactor code
+
 class BookController {
 	static responseFormats = ['json']
 	
