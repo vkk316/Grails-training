@@ -33,4 +33,15 @@ class BookController {
 
         render(result as JSON)
     }
+
+    def save(){
+        def result = [valid: false]
+        def book = new Book(request.JSON)
+        book.save(failOnError: true)
+
+        result.data = book
+        result.valid = true
+
+        render(result as JSON) 
+    }
 }
