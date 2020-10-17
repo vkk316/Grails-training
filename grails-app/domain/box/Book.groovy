@@ -3,17 +3,19 @@ package box
 import java.time.LocalDate
 
 class Book {
-    //การตังชื่อ property ตัวพิมพ์เล็ก-พิมพ์ใหญ่สำคัญมากๆๆๆๆ
-    //ซิึ่งการชือ property ต้องงงง ขึ้นต้นด้วยตัวพิมพ์ใหญ่เท่านั้น
-
-    //อ้างอิงจาก doc ของ Groovy lang
     String titleTH
-    String titleENG
+    String titleEng
     String author
     double price
     LocalDate since
 
+    boolean isRead = true
+
+    static belongsTo = [category: BookCategory, location: Location]
+
+    static hasMany = [authors: BookAuthor]
+
     static constraints = {
-        //ไว้เรื่องหลัง ๆ ครับ
+        titleTH blank: false, nullable: false
     }
 }

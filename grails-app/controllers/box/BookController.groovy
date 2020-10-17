@@ -3,28 +3,65 @@ package box
 import grails.gorm.transactions.Transactional
 import grails.rest.*
 import grails.converters.*
-
+import java.time.LocalDate
 // Before Refactor code
 
 class BookController {
 	static responseFormats = ['json']
 	
     def index() { 
-        //Groovy เป็น lang ที่เป็น dynamic datatype
+        def result = [valid: false]
 
-        // [ key: value ] <--- เรียกว่า Map คล้ายๆ Hash Table ใน C
-        def result = [valid: false]  // เป็น convention ของ Bonmek
-        def books = Book.list() // method list :: docs --> http://docs.grails.org/3.1.1/ref/Domain%20Classes/list.html 
+        def qp = params
 
-        def totalcount = Book.count() // Returns the total number of rows in the domain class table
-        // ที่ เอาค่าต่างๆ มาแมบ
-        result.data = books // เอา books ไปใส่ใน value ของ key "data" 
-        result.count = totalcount // เอา books ไปใส่ใน value ของ key "count" 
+        def filter = new BookFilter()
+
+        bindData(filter, qp.filter)
+
+        filter = filter.properties
+
+        def booksCriteria = Book.where{}.build {
+
+            if(filter.titleEng__ilike){
+                ilike 'titleEng', "%${filter.titleEng__ilike}%"
+            }
+            
+            if(filter.price__gt){
+                gt 'price', filter.price__gt
+            }
+
+            if(filter.isRead != null){
+                eq 'isRead', filter.isRead
+            }
+
+            if(filter.since){
+                gt 'since', filter.since
+            }
+
+            if(filter.since1 && filter.since2){
+                between 'since', filter.since1, filter.since2
+            }
+
+            if(filter.bookCateId){
+                eq 'category.id', filter.bookCateId
+            }
+
+            if(filter.authorTitle){
+                authors {
+                    author {
+                        ilike 'titleEng', "%${filter.authorTitle}%"
+                    }
+                }
+            }
+            
+        }
+
+        result.data = booksCriteria.list(offset: qp.offset ?: 0, max: qp.max ?: 10)
+        result.totalCount = booksCriteria.count()
         result.valid = true
 
-        render(result as JSON) // เอาท์พุต result เป็น json ที่ฝั่ง clien
+        render(result as JSON)
     }
-
     def show(Long id){
         def result = [valid: false]
         def book = Book.get(id) // get book ตาม id ที่ clien ขอ
@@ -77,4 +114,15 @@ class BookController {
         }
         render(result as JSON)
     }
+}
+
+class BookFilter {
+    String titleEng__ilike
+    Double price__gt
+    Boolean isRead
+    LocalDate since
+    LocalDate since1
+    LocalDate since2
+    String authorTitle
+    Long bookCateId 
 }
