@@ -1,6 +1,6 @@
 package box
 
-
+import grails.gorm.transactions.Transactional
 import grails.rest.*
 import grails.converters.*
 
@@ -43,5 +43,26 @@ class BookController {
         result.valid = true
 
         render(result as JSON) 
+    }
+
+    @Transactional
+    def update(){
+        /* 
+        1. get book following id
+        2. new data from clien to replace rpevious data
+        3. save it 
+        */
+
+        def result = [valid: false]
+        def book = Book.get(params.id as long)
+        bindData(book, request.JSON)
+
+        book.save(failOnError: true)
+
+        result.data = book
+        result.valid = true
+
+        render(result as JSON)
+        
     }
 }
